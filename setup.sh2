@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [ $# -eq 0 ]; then
+  DATA_DIR="./"
+else
+  DATA_DIR="$1"
+fi
+
+# Download TF Lite models
+FILE=${DATA_DIR}/efficientdet_lite1.tflite
+if [ ! -f "$FILE" ]; then
+  curl \
+    -L 'https://tfhub.dev/tensorflow/lite-model/efficientdet/lite1/detection/metadata/1?lite-format=tflite' \
+    -o ${FILE}
+fi
+
+echo -e "Downloaded files are in ${DATA_DIR}"
