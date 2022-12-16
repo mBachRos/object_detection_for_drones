@@ -123,7 +123,7 @@ def run(model: str, camera_id: int, width: int, height: int, num_threads: int,
     image = utils.visualize(image, detection_result)
     
     # Writes the picture, category and the probability of it being the category to directory for the run
-    if (utils.prob >= 0.8):
+    if (utils.prob >= 0.4):
         #Sending detectioninformation to right directory
         data_storage.write_log_to_directory(utils.cat_name, utils.prob, n, run_num)
         #Sending images of detections to right directory
