@@ -1,1 +1,11 @@
 This folder contains the scripts of both HMI1 and HMI2
+
+To run HMI1:
+
+ download HMI_1.json
+
+ install node-red
+ 
+ open 127.0.0.1:1880 in your web browser
+ 
+ then import nodes, select HMI_1.json
