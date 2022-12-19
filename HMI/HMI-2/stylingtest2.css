@@ -1,0 +1,24 @@
+body  
+{  
+    margin: 0;  
+    padding: 0;  
+    background-color: #000000;  
+    font-family: 'Impact';  
+}  
+label
+{  
+    color: #FF0836;  
+    font-size: 48px;  
+}
+l1
+{  
+    color: #FF0836;  
+    font-size: 26px;
+    font-family: 'Courier New';  
+}
+l2
+{  
+    color: #FF0836;  
+    font-size: 29px;  
+    font-family: 'Courier New'; 
+}
