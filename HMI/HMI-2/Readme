@@ -1,1 +1,5 @@
-HMI-2
+HMI-2 contains a php file for the website and a CSS file for the styling of the website
+
+To run HMI-2 you need to place both files in C:\inetpub\wwwroot\HMI-2
+
+Then open 127.0.0.1/HMI-2 in your web browser
