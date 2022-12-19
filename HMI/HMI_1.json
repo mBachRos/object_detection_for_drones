@@ -1,0 +1,1853 @@
+[
+    {
+        "id": "9f9a0fd71b2c7320",
+        "type": "tab",
+        "label": "HMI_1",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "23db556eac21c5d9",
+        "type": "udp in",
+        "z": "9f9a0fd71b2c7320",
+        "name": "",
+        "iface": "",
+        "port": "4243",
+        "ipv": "udp4",
+        "multicast": "true",
+        "group": "225.0.0.25",
+        "datatype": "utf8",
+        "x": 130,
+        "y": 320,
+        "wires": [
+            [
+                "55f7d8a84d56d6a9"
+            ]
+        ]
+    },
+    {
+        "id": "ba6b4f3473793cca",
+        "type": "inject",
+        "z": "9f9a0fd71b2c7320",
+        "name": "Show Map in Dashboard",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "1",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 170,
+        "y": 440,
+        "wires": [
+            [
+                "e75eb2c7a2111524"
+            ]
+        ]
+    },
+    {
+        "id": "562db267cab69119",
+        "type": "ui_template",
+        "z": "9f9a0fd71b2c7320",
+        "group": "adfec63678897b76",
+        "name": "Show Map",
+        "order": 1,
+        "width": "19",
+        "height": "12",
+        "format": "<div style=\"text-align: center;padding: 0px;\"><iframe id=\"map\" src=\"\" style=\"display: block; width: 100%; height: 100vh; border: none;\" scrolling=\"no\" frameborder=\"0\"></iframe></div>\n<script>\n(function(scope) {\n    // watch msg object from Node-RED\n    scope.$watch('msg', function(msg) {\n        // new message received\n        var x = document.getElementById('map');\n        x.setAttribute('src', msg.payload); \n        });\n})(scope);\n</script>",
+        "storeOutMessages": false,
+        "fwdInMessages": true,
+        "resendOnRefresh": false,
+        "templateScope": "local",
+        "className": "",
+        "x": 730,
+        "y": 440,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e75eb2c7a2111524",
+        "type": "ip",
+        "z": "9f9a0fd71b2c7320",
+        "name": "Get IP",
+        "https": false,
+        "timeout": "5000",
+        "internalIPv4": true,
+        "internalIPv6": false,
+        "publicIPv4": false,
+        "publicIPv6": false,
+        "x": 350,
+        "y": 440,
+        "wires": [
+            [
+                "861f7d3ec3cb68e8"
+            ]
+        ]
+    },
+    {
+        "id": "861f7d3ec3cb68e8",
+        "type": "function",
+        "z": "9f9a0fd71b2c7320",
+        "name": "Create LiveFeed-address",
+        "func": "msg.payload = \"http://\"+msg.payload.internalIPv4+\":1880/worldmap\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 530,
+        "y": 440,
+        "wires": [
+            [
+                "562db267cab69119"
+            ]
+        ]
+    },
+    {
+        "id": "2c73b21d161c58c4",
+        "type": "json",
+        "z": "9f9a0fd71b2c7320",
+        "name": "string to object",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 580,
+        "y": 320,
+        "wires": [
+            [
+                "6ac699d7be2beaf0"
+            ]
+        ]
+    },
+    {
+        "id": "da7e0dc154ae31da",
+        "type": "inject",
+        "z": "9f9a0fd71b2c7320",
+        "name": "SwarmCommand - structure",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "SwarmCommand",
+        "payload": "{\"header\":{\"secs\":\"int\",\"nsecs\":\"int\",\"seq\":0,\"id\":4,\"msgType\":\"int\",\"reTransmit\":\"int\",\"Ack\":0},\"taskType\":\"int\",\"headingMode\":\"int\",\"colavMode\":\"int\",\"destination\":{\"latitude\":\"float\",\"longitude\":\"float\"},\"fence\":{\"latitude\":60.3943,\"longitude\":5.2659},\"speed\":\"float\",\"heading\":\"float\",\"doImidiate\":\"bool\"}",
+        "payloadType": "json",
+        "x": 180,
+        "y": 60,
+        "wires": [
+            [
+                "f81b4e7cbe8c3b5e"
+            ]
+        ]
+    },
+    {
+        "id": "4ee722f3deb7ab89",
+        "type": "inject",
+        "z": "9f9a0fd71b2c7320",
+        "name": "BoatOdometry - structure",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "BoatOdometry",
+        "payload": "{\"header\":{\"reTransmit\":\"int\",\"seq\":\"int\",\"Ack\":\"int\",\"nsecs\":\"int\",\"secs\":\"int\",\"msgType\":\"int\",\"id\":\"int\"},\"movement\":{\"speed\":\"float\",\"heading\":\"float\"},\"position\":{\"latitude\":\"float\",\"longitude\":\"float\"}}",
+        "payloadType": "json",
+        "x": 170,
+        "y": 100,
+        "wires": [
+            [
+                "f36d877a0ac30371"
+            ]
+        ]
+    },
+    {
+        "id": "f81b4e7cbe8c3b5e",
+        "type": "change",
+        "z": "9f9a0fd71b2c7320",
+        "name": "Save to global.SwarmCommandStruct",
+        "rules": [
+            {
+                "t": "set",
+                "p": "SwarmCommandStruct",
+                "pt": "global",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 490,
+        "y": 60,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f36d877a0ac30371",
+        "type": "change",
+        "z": "9f9a0fd71b2c7320",
+        "name": "Save to global.BoatOdometryStruct",
+        "rules": [
+            {
+                "t": "set",
+                "p": "BoatOdometryStruct",
+                "pt": "global",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 480,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6ac699d7be2beaf0",
+        "type": "switch",
+        "z": "9f9a0fd71b2c7320",
+        "name": "Select msgType",
+        "property": "payload.header.msgType",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "0",
+                "vt": "num"
+            },
+            {
+                "t": "eq",
+                "v": "1",
+                "vt": "num"
+            },
+            {
+                "t": "eq",
+                "v": "2",
+                "vt": "num"
+            },
+            {
+                "t": "eq",
+                "v": "3",
+                "vt": "num"
+            },
+            {
+                "t": "eq",
+                "v": "4",
+                "vt": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 5,
+        "x": 760,
+        "y": 320,
+        "wires": [
+            [],
+            [
+                "3b7f45862da779b5",
+                "071011c09744a0d7"
+            ],
+            [],
+            [],
+            [
+                "28baa57701fca845"
+            ]
+        ],
+        "inputLabels": [
+            "multicast - objects"
+        ],
+        "outputLabels": [
+            "HEARTBEAT",
+            "ODOMETRY",
+            "SWARM_COMMAND",
+            "BOAT_STATUS",
+            ""
+        ]
+    },
+    {
+        "id": "3b7f45862da779b5",
+        "type": "function",
+        "z": "9f9a0fd71b2c7320",
+        "name": "reformat (delete and replace)",
+        "func": "var BoatOdometry = msg.payload;\n\ndelete msg.payload;\nmsg.payload = {};\n\n//Delete old position\nmsg.payload.layer = \"Sverm\";\nmsg.payload.name = \"Boat \" + BoatOdometry.header.id;\nmsg.payload.deleted = true;\nmsg.payload.deleted = undefined;\n\n//Place at new position\nmsg.payload.lat = BoatOdometry.position.latitude;\nmsg.payload.lon = BoatOdometry.position.longitude;\n//msg.payload.layer = \"Sverm\";\n//msg.payload.name = \"Boat \" + BoatOdometry.header.id;\nmsg.payload.id = BoatOdometry.header.id;\n//msg.payload.icon = \"ship\";\nmsg.payload.SIDC = \"SFSPCU------\";\nmsg.payload.iconColor = \"grey\";\n//msg.payload.ttl = 5;    //Båten forsvinner etter 5 sec uten ny oppdatering\nmsg.payload.bearing = BoatOdometry.movement.heading;\nmsg.payload.speed = BoatOdometry.movement.speed;\nmsg.payload.time = flow.get(\"time\")||Date.now();\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1040,
+        "y": 280,
+        "wires": [
+            [
+                "0fdcec267c0f6bce",
+                "f6013a631781deec"
+            ]
+        ]
+    },
+    {
+        "id": "0fdcec267c0f6bce",
+        "type": "worldmap",
+        "z": "9f9a0fd71b2c7320",
+        "name": "",
+        "lat": "60.394195",
+        "lon": "5.262922",
+        "zoom": "17",
+        "layer": "OSMG",
+        "cluster": "",
+        "maxage": "",
+        "usermenu": "show",
+        "layers": "show",
+        "panit": "false",
+        "panlock": "false",
+        "zoomlock": "false",
+        "hiderightclick": "false",
+        "coords": "none",
+        "showgrid": "false",
+        "path": "/worldmap",
+        "overlist": "DR,CO,RA,DN,HM",
+        "maplist": "OSMG,OSMC,EsriC,EsriS,EsriT,EsriO,EsriDG,NatGeo,UKOS,OpTop",
+        "mapname": "",
+        "mapurl": "",
+        "mapopt": "",
+        "mapwms": false,
+        "x": 2040,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "9c2c63f5673a8017",
+        "type": "function",
+        "z": "9f9a0fd71b2c7320",
+        "name": "Zoom to Sjøkrigsskolen",
+        "func": "//Sjøkrigskolen:\n//60.394195, 5.262922\nmsg.payload = { command:{layer:\"OSM\",lat:60.394195,lon:5.262922,zoom:17} };\n//return msg;\n//Tennebekktjørna:\n//60.365013, 5.263031\n//msg.payload = { command:{layer:\"OSM\",lat:60.365013,lon:5.263031,zoom:17} };\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 480,
+        "wires": [
+            [
+                "c2dce209dfef4700"
+            ]
+        ]
+    },
+    {
+        "id": "1d9ef2851b3cf157",
+        "type": "comment",
+        "z": "9f9a0fd71b2c7320",
+        "name": "User Interface - Map control:",
+        "info": "",
+        "x": 160,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "6350f8533fe355ca",
+        "type": "comment",
+        "z": "9f9a0fd71b2c7320",
+        "name": "Receive messages:",
+        "info": "",
+        "x": 130,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "a9b757bf9d66f096",
+        "type": "comment",
+        "z": "9f9a0fd71b2c7320",
+        "name": "Message structure:",
+        "info": "",
+        "x": 130,
+        "y": 20,
+        "wires": []
+    },
+    {
+        "id": "990abadee480cd24",
+        "type": "link in",
+        "z": "9f9a0fd71b2c7320",
+        "name": "",
+        "links": [
+            "c2dce209dfef4700"
+        ],
+        "x": 1905,
+        "y": 340,
+        "wires": [
+            [
+                "0fdcec267c0f6bce"
+            ]
+        ]
+    },
+    {
+        "id": "c2dce209dfef4700",
+        "type": "link out",
+        "z": "9f9a0fd71b2c7320",
+        "name": "To worldmap",
+        "mode": "link",
+        "links": [
+            "990abadee480cd24"
+        ],
+        "x": 635,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "23b08c0f532c7c8d",
+        "type": "ui_dropdown",
+        "z": "9f9a0fd71b2c7320",
+        "name": "",
+        "label": "Quick Zoom to",
+        "tooltip": "",
+        "place": "Select option",
+        "group": "adfec63678897b76",
+        "order": 3,
+        "width": "5",
+        "height": "1",
+        "passthru": true,
+        "multiple": false,
+        "options": [
+            {
+                "label": "SKSK",
+                "value": 0,
+                "type": "num"
+            },
+            {
+                "label": "Nipedalen",
+                "value": 1,
+                "type": "num"
+            }
+        ],
+        "payload": "",
+        "topic": "",
+        "topicType": "str",
+        "className": "",
+        "x": 122,
+        "y": 492,
+        "wires": [
+            [
+                "29b39611b720e895"
+            ]
+        ]
+    },
+    {
+        "id": "59d0682799a2648e",
+        "type": "function",
+        "z": "9f9a0fd71b2c7320",
+        "name": "Zoom to Tennebekktjørna",
+        "func": "//Sjøkrigskolen:\n//60.394195, 5.262922\n//msg.payload = { command:{layer:\"OSM\",lat:60.394195,lon:5.262922,zoom:17} };\n//return msg;\n//Tennebekktjørna:\n//60.365013, 5.263031\nmsg.payload = { command:{layer:\"OSM\",lat:60.365013,lon:5.263031,zoom:17} };\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 470,
+        "y": 520,
+        "wires": [
+            [
+                "c2dce209dfef4700"
+            ]
+        ]
+    },
+    {
+        "id": "29b39611b720e895",
+        "type": "switch",
+        "z": "9f9a0fd71b2c7320",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "0",
+                "vt": "num"
+            },
+            {
+                "t": "eq",
+                "v": "1",
+                "vt": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 269,
+        "y": 491,
+        "wires": [
+            [
+                "9c2c63f5673a8017"
+            ],
+            [
+                "59d0682799a2648e"
+            ]
+        ]
+    },
+    {
+        "id": "e22625b0ec896dcd",
+        "type": "udp out",
+        "z": "9f9a0fd71b2c7320",
+        "name": "",
+        "addr": "225.0.0.25",
+        "iface": "",
+        "port": "4243",
+        "ipv": "udp4",
+        "outport": "",
+        "base64": false,
+        "multicast": "multi",
+        "x": 840,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "d374bce15e4c9220",
+        "type": "comment",
+        "z": "9f9a0fd71b2c7320",
+        "name": "User Interface - Send messages:",
+        "info": "",
+        "x": 170,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "29c9bcb3a4e57247",
+        "type": "ui_button",
+        "z": "9f9a0fd71b2c7320",
+        "name": "",
+        "group": "ac3aa95791cf5f2c",
+        "order": 1,
+        "width": "5",
+        "height": "1",
+        "passthru": false,
+        "label": "Kill-command",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "#ff2d00",
+        "className": "",
+        "icon": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "topic": "payload",
+        "topicType": "str",
+        "x": 125,
+        "y": 618,
+        "wires": [
+            [
+                "4aefc00dc358cd4e"
+            ]
+        ]
+    },
+    {
+        "id": "41989f452c5ccbb0",
+        "type": "inject",
+        "z": "9f9a0fd71b2c7320",
+        "name": "Prepare Swarm-Kill-Command",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"header\":{\"secs\":\"int\",\"nsecs\":\"int\",\"seq\":0,\"id\":\"int\",\"msgType\":\"int\",\"reTransmit\":\"int\",\"Ack\":\"int\"},\"taskType\":\"int\",\"headingMode\":\"int\",\"colavMode\":\"int\",\"destination\":{\"latitude\":\"float\",\"longitude\":\"float\"},\"fence\":{\"latitude\":\"float\",\"longitude\":\"float\"},\"speed\":\"float\",\"heading\":\"float\",\"doImidiate\":\"bool\"}",
+        "payloadType": "json",
+        "x": 190,
+        "y": 180,
+        "wires": [
+            [
+                "0561d23fa94d8620",
+                "2b4eae35a657c03e"
+            ]
+        ]
+    },
+    {
+        "id": "17a003741e52242f",
+        "type": "change",
+        "z": "9f9a0fd71b2c7320",
+        "name": "Save to global.SwarmCommandKill",
+        "rules": [
+            {
+                "t": "set",
+                "p": "SwarmCommandKill",
+                "pt": "global",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1020,
+        "y": 180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "0561d23fa94d8620",
+        "type": "change",
+        "z": "9f9a0fd71b2c7320",
+        "name": "Get global.SwarmCommandStruct",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "SwarmCommandStruct",
+                "tot": "global"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 480,
+        "y": 180,
+        "wires": [
+            [
+                "8a3316eaaef44015"
+            ]
+        ]
+    },
+    {
+        "id": "8a3316eaaef44015",
+        "type": "function",
+        "z": "9f9a0fd71b2c7320",
+        "name": "Adjust to Kill-Command",
+        "func": "msg.payload.header.secs = 0;\nmsg.payload.header.nsecs = 0;\nmsg.payload.header.id = 4;\nmsg.payload.header.msgType = 2;\nmsg.payload.header.reTransmit = 0;\nmsg.payload.header.ack = 0;\nmsg.payload.taskType = 0;\nmsg.payload.headingMode = 0;\nmsg.payload.colavMode = 0;\nmsg.payload.destination.latitude = 60.394195;\nmsg.payload.destination.longitude = 5.262922;\nmsg.payload.fence.latitude = 60.3943;\nmsg.payload.fence.longitude = 5.2659;\nmsg.payload.speed = 0.0\nmsg.payload.heading = 0.0\nmsg.payload.doImidiate = false;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 750,
+        "y": 180,
+        "wires": [
+            [
+                "17a003741e52242f"
+            ]
+        ]
+    },
+    {
+        "id": "55f7d8a84d56d6a9",
+        "type": "function",
+        "z": "9f9a0fd71b2c7320",
+        "name": "remove first and last",
+        "func": "var s1 = msg.payload;\nvar s2 = s1.substr(1);\n\n//var s3 = s2.slice(0, s2.length-1);\nmsg.payload = s2;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 320,
+        "wires": [
+            [
+                "2c73b21d161c58c4",
+                "159f0dd7a0d77c69"
+            ]
+        ]
+    },
+    {
+        "id": "5cd1dfdcbf7161a4",
+        "type": "ui_table",
+        "z": "9f9a0fd71b2c7320",
+        "group": "adfec63678897b76",
+        "name": "Swarm Units",
+        "order": 2,
+        "width": "19",
+        "height": "4",
+        "columns": [],
+        "outputs": 0,
+        "cts": false,
+        "x": 1410,
+        "y": 340,
+        "wires": [],
+        "info": "[\r\n    {\r\n        \"Name\": \"Kazuhito Yokoi\",\r\n        \"Age\": \"35\",\r\n        \"Favourite Color\": \"red\",\r\n        \"Date Of Birth\": \"12/09/1983\"\r\n    },\r\n    {\r\n        \"Name\": \"Oli Bob\",\r\n        \"Age\": \"12\",\r\n        \"Favourite Color\": \"cyan\",\r\n        \"Date Of Birth\": \"12/08/2017\"\r\n    }\r\n]"
+    },
+    {
+        "id": "071011c09744a0d7",
+        "type": "function",
+        "z": "9f9a0fd71b2c7320",
+        "name": "reformat (delete and replace)",
+        "func": "var BoatOdometry = msg.payload;\nmsg.topic = {};\n//Place at new position\nmsg.topic.id = BoatOdometry.header.id;\nmsg.topic.lat = BoatOdometry.position.latitude;\nmsg.topic.lon = BoatOdometry.position.longitude;\nmsg.topic.bearing = BoatOdometry.movement.heading;\nmsg.topic.speed = BoatOdometry.movement.speed;\n\nglobal.set(\"list[\"+(BoatOdometry.header.id)+\"]\",msg.topic );\n\nmsg.payload = global.get(\"list\");\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1040,
+        "y": 320,
+        "wires": [
+            [
+                "5cd1dfdcbf7161a4"
+            ]
+        ]
+    },
+    {
+        "id": "2b4eae35a657c03e",
+        "type": "function",
+        "z": "9f9a0fd71b2c7320",
+        "name": "def globals",
+        "func": "global.set(\"list\", []);\nglobal.set(\"command\", global.get(\"SwarmCommandStruct\"));",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 410,
+        "y": 220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "37997545223426c1",
+        "type": "ui_form",
+        "z": "9f9a0fd71b2c7320",
+        "name": "",
+        "label": "Set fence",
+        "group": "ac3aa95791cf5f2c",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "options": [
+            {
+                "label": "lat",
+                "value": "fencelatitude",
+                "type": "number",
+                "required": true
+            },
+            {
+                "label": "lon",
+                "value": "fencelongitude",
+                "type": "number",
+                "required": true
+            }
+        ],
+        "formValue": {
+            "fencelatitude": "",
+            "fencelongitude": ""
+        },
+        "payload": "",
+        "submit": "Send",
+        "cancel": "Reset",
+        "topic": "",
+        "x": 105,
+        "y": 738,
+        "wires": [
+            [
+                "51de62c19d681f34"
+            ]
+        ]
+    },
+    {
+        "id": "51de62c19d681f34",
+        "type": "function",
+        "z": "9f9a0fd71b2c7320",
+        "name": "set command",
+        "func": "var command = global.get(\"command\");\n\ncommand.colavMode = 2;\n\ncommand.fence.latitude = msg.payload.fencelatitude;\ncommand.fence.longitude = msg.payload.fencelongitude;\n\ncommand.doImidiate = false;\n\nglobal.set(\"command\", command);\nmsg.payload = command;\nreturn msg;\n\n/*\ntry{ //set fence if fence is given\n    command.fence.latitude = msg.payload.fencelatitude;\n    command.fence.longitude = msg.payload.fencelongitude;\n}\ncatch(e){}\n\n\ntry{ //try to set destination if destination is given\n    command.destination.latitude = msg.payload.destlatitude;\n    command.destination.longitude = msg.payload.destlongitude;\n}\ncatch(e){}\n\n\ntry{ //try to set destination if destination is given\n    command.speed= msg.payload.velspeed;\n    command.heading = msg.payload.velheading;\n}\ncatch(e){}\n*/",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 325,
+        "y": 738,
+        "wires": [
+            [
+                "7c177b32fecc1d95",
+                "d32aea4f6c60a71b"
+            ]
+        ]
+    },
+    {
+        "id": "4aefc00dc358cd4e",
+        "type": "function",
+        "z": "9f9a0fd71b2c7320",
+        "name": "set command",
+        "func": "var command = global.get(\"command\");\n\ncommand.doImidiate = true;\n\nglobal.set(\"command\", command);\nmsg.payload = command;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 325,
+        "y": 618,
+        "wires": [
+            [
+                "61a8ad6f43b5645d"
+            ]
+        ]
+    },
+    {
+        "id": "c040e256fd08d9ec",
+        "type": "ui_form",
+        "z": "9f9a0fd71b2c7320",
+        "name": "",
+        "label": "Set new destination",
+        "group": "ac3aa95791cf5f2c",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "options": [
+            {
+                "label": "latitude",
+                "value": "destlatitude",
+                "type": "number",
+                "required": true
+            },
+            {
+                "label": "longitude",
+                "value": "destlongitude",
+                "type": "number",
+                "required": true
+            }
+        ],
+        "formValue": {
+            "destlatitude": "",
+            "destlongitude": ""
+        },
+        "payload": "",
+        "submit": "Send",
+        "cancel": "Reset",
+        "topic": "",
+        "x": 135,
+        "y": 778,
+        "wires": [
+            [
+                "437f513c75a5fcf3"
+            ]
+        ]
+    },
+    {
+        "id": "5b8f5e04bda0aa0b",
+        "type": "inject",
+        "z": "9f9a0fd71b2c7320",
+        "name": "",
+        "repeat": "5",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 920,
+        "wires": [
+            [
+                "7d3360010dde86f1",
+                "d32aea4f6c60a71b"
+            ]
+        ]
+    },
+    {
+        "id": "7d3360010dde86f1",
+        "type": "function",
+        "z": "9f9a0fd71b2c7320",
+        "name": "get command",
+        "func": "var command = global.get(\"command\");\nvar tab = [];\ntab[0] = command\n\nmsg.payload = tab;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 320,
+        "y": 920,
+        "wires": [
+            [
+                "d89270d099853eff"
+            ]
+        ]
+    },
+    {
+        "id": "d89270d099853eff",
+        "type": "ui_table",
+        "z": "9f9a0fd71b2c7320",
+        "group": "ac3aa95791cf5f2c",
+        "name": "Current command",
+        "order": 6,
+        "width": "8",
+        "height": "4",
+        "columns": [
+            {
+                "field": "destination.latitude",
+                "title": "destination lat",
+                "width": "",
+                "align": "center",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "destination.longitude",
+                "title": "destination lon",
+                "width": "",
+                "align": "center",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "fence.latitude",
+                "title": "fence lat",
+                "width": "",
+                "align": "center",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "fence.longitude",
+                "title": "fence lon",
+                "width": "",
+                "align": "center",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "speed",
+                "title": "wanted speed",
+                "width": "",
+                "align": "center",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "doImidiate",
+                "title": "stop",
+                "width": "",
+                "align": "right",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "heading",
+                "title": "wanteed heading",
+                "width": "",
+                "align": "right",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            }
+        ],
+        "outputs": 0,
+        "cts": false,
+        "x": 590,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "1291bd2e782b14cd",
+        "type": "ui_form",
+        "z": "9f9a0fd71b2c7320",
+        "name": "",
+        "label": "Set wanted speed",
+        "group": "ac3aa95791cf5f2c",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "options": [
+            {
+                "label": "speed",
+                "value": "velspeed",
+                "type": "number",
+                "required": true
+            },
+            {
+                "label": "heading",
+                "value": "velheading",
+                "type": "number",
+                "required": true
+            }
+        ],
+        "formValue": {
+            "velspeed": "",
+            "velheading": ""
+        },
+        "payload": "",
+        "submit": "Send",
+        "cancel": "Reset",
+        "topic": "",
+        "x": 135,
+        "y": 818,
+        "wires": [
+            [
+                "0b47a90672a4f0b7"
+            ]
+        ]
+    },
+    {
+        "id": "7c177b32fecc1d95",
+        "type": "function",
+        "z": "9f9a0fd71b2c7320",
+        "name": "make start header",
+        "func": "var test = JSON.stringify(msg.payload);\nmsg.payload = '0' + test\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 575,
+        "y": 678,
+        "wires": [
+            [
+                "e22625b0ec896dcd"
+            ]
+        ]
+    },
+    {
+        "id": "437f513c75a5fcf3",
+        "type": "function",
+        "z": "9f9a0fd71b2c7320",
+        "name": "set command",
+        "func": "var command = global.get(\"command\");\n\ncommand.colavMode = 3;\n\ncommand.destination.latitude = msg.payload.destlatitude;\ncommand.destination.longitude = msg.payload.destlongitude;\n\ncommand.doImidiate = false;\n\nglobal.set(\"command\", command);\nmsg.payload = command;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 325,
+        "y": 778,
+        "wires": [
+            [
+                "7c177b32fecc1d95"
+            ]
+        ]
+    },
+    {
+        "id": "0b47a90672a4f0b7",
+        "type": "function",
+        "z": "9f9a0fd71b2c7320",
+        "name": "set command",
+        "func": "var command = global.get(\"command\");\n\ncommand.colavMode = 4;\n\ncommand.speed= msg.payload.velspeed;\ncommand.heading = msg.payload.velheading;\n\ncommand.doImidiate = false;\n\nglobal.set(\"command\", command);\nmsg.payload = command;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 325,
+        "y": 818,
+        "wires": [
+            [
+                "7c177b32fecc1d95"
+            ]
+        ]
+    },
+    {
+        "id": "61a8ad6f43b5645d",
+        "type": "function",
+        "z": "9f9a0fd71b2c7320",
+        "name": "make start header",
+        "func": "var test = JSON.stringify(msg.payload);\nmsg.payload = '0' + test\nreturn msg;\n\n//cheating in a false 0 header to trick reciever",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 575,
+        "y": 618,
+        "wires": [
+            [
+                "e22625b0ec896dcd"
+            ]
+        ]
+    },
+    {
+        "id": "6a749bf29a4843b3",
+        "type": "function",
+        "z": "9f9a0fd71b2c7320",
+        "name": "set command",
+        "func": "var command = global.get(\"command\");\n\ncommand.colavMode = 1;\n\ncommand.taskType = msg.payload;\n\ncommand.doImidiate = false;\n\nglobal.set(\"command\", command);\nmsg.payload = command;\nreturn msg;\n\n/*\ntry{ //set fence if fence is given\n    command.fence.latitude = msg.payload.fencelatitude;\n    command.fence.longitude = msg.payload.fencelongitude;\n}\ncatch(e){}\n\n\ntry{ //try to set destination if destination is given\n    command.destination.latitude = msg.payload.destlatitude;\n    command.destination.longitude = msg.payload.destlongitude;\n}\ncatch(e){}\n\n\ntry{ //try to set destination if destination is given\n    command.speed= msg.payload.velspeed;\n    command.heading = msg.payload.velheading;\n}\ncatch(e){}\n*/",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 345,
+        "y": 678,
+        "wires": [
+            [
+                "7c177b32fecc1d95"
+            ]
+        ]
+    },
+    {
+        "id": "3b9135576f4d7d37",
+        "type": "ui_dropdown",
+        "z": "9f9a0fd71b2c7320",
+        "name": "",
+        "label": "Choose behaviour",
+        "tooltip": "standard is boids behaviour",
+        "place": "Select option",
+        "group": "ac3aa95791cf5f2c",
+        "order": 2,
+        "width": "5",
+        "height": "1",
+        "passthru": true,
+        "options": [
+            {
+                "label": "Boids",
+                "value": 0,
+                "type": "num"
+            },
+            {
+                "label": "PSO",
+                "value": 1,
+                "type": "num"
+            }
+        ],
+        "payload": "",
+        "topic": "",
+        "x": 135,
+        "y": 678,
+        "wires": [
+            [
+                "6a749bf29a4843b3"
+            ]
+        ]
+    },
+    {
+        "id": "c26aa465c07e5956",
+        "type": "link out",
+        "z": "9f9a0fd71b2c7320",
+        "name": "To worldmap",
+        "links": [
+            "4b65ac7253e95332"
+        ],
+        "x": 735,
+        "y": 1000,
+        "wires": []
+    },
+    {
+        "id": "d32aea4f6c60a71b",
+        "type": "function",
+        "z": "9f9a0fd71b2c7320",
+        "name": "set fence center on map",
+        "func": "var command = global.get(\"command\");\n\nmsg.payload = {};\n//Delete old position\nmsg.payload.layer = \"Sverm\";\nmsg.payload.name = \"Fence\";\n\n//Place at new position\ntry{\n    msg.payload.lat = command.fence.latitude;\n    msg.payload.lon = command.fence.longitude;\n}catch(e){}\n\nmsg.payload.radius = 50;\nmsg.payload.fillOpacity = 0.1;\nmsg.payload.draggable = true;\n//msg.payload.layer = \"Sverm\";\n//msg.payload.name = \"Boat \" + BoatOdometry.header.id;\nmsg.payload.ttl = 10;\nmsg.payload.time = flow.get(\"time\")||Date.now();\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 590,
+        "y": 1000,
+        "wires": [
+            [
+                "c26aa465c07e5956"
+            ]
+        ]
+    },
+    {
+        "id": "4b65ac7253e95332",
+        "type": "link in",
+        "z": "9f9a0fd71b2c7320",
+        "name": "",
+        "links": [
+            "c26aa465c07e5956"
+        ],
+        "x": 1905,
+        "y": 380,
+        "wires": [
+            [
+                "0fdcec267c0f6bce"
+            ]
+        ]
+    },
+    {
+        "id": "53e14f21bc824d1e",
+        "type": "comment",
+        "z": "9f9a0fd71b2c7320",
+        "name": "User Interface - Show command data:",
+        "info": "",
+        "x": 190,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "ed2ba700c6df92d2",
+        "type": "inject",
+        "z": "9f9a0fd71b2c7320",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 560,
+        "y": 580,
+        "wires": [
+            [
+                "e22625b0ec896dcd"
+            ]
+        ]
+    },
+    {
+        "id": "3bd74fa74d89dfa7",
+        "type": "worldmap in",
+        "z": "9f9a0fd71b2c7320",
+        "name": "",
+        "path": "/worldmap",
+        "events": "connect,disconnect,point,layer,bounds,files,draw,other",
+        "x": 100,
+        "y": 1060,
+        "wires": [
+            [
+                "a916e67987ce7bd6"
+            ]
+        ]
+    },
+    {
+        "id": "ea835c0d19913ade",
+        "type": "function",
+        "z": "9f9a0fd71b2c7320",
+        "name": "set command",
+        "func": "if (msg.payload.action == \"move\"){\n\n    var command = global.get(\"command\");\n    \n    command.colavMode = 2;\n    \n    command.fence.latitude = msg.payload.lat;\n    command.fence.longitude = msg.payload.lon;\n    \n    command.doImidiate = false;\n    \n    global.set(\"command\", command);\n    msg.payload = command;\n    return msg;\n}\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 1060,
+        "wires": [
+            [
+                "c8054b3885cd35e8"
+            ]
+        ]
+    },
+    {
+        "id": "a916e67987ce7bd6",
+        "type": "switch",
+        "z": "9f9a0fd71b2c7320",
+        "name": "",
+        "property": "payload.name",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Fence",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 230,
+        "y": 1060,
+        "wires": [
+            [
+                "ea835c0d19913ade"
+            ]
+        ]
+    },
+    {
+        "id": "c8054b3885cd35e8",
+        "type": "function",
+        "z": "9f9a0fd71b2c7320",
+        "name": "make start header",
+        "func": "var test = JSON.stringify(msg.payload);\nmsg.payload = '0' + test\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 570,
+        "y": 1060,
+        "wires": [
+            [
+                "300044864703d84d"
+            ]
+        ]
+    },
+    {
+        "id": "300044864703d84d",
+        "type": "link out",
+        "z": "9f9a0fd71b2c7320",
+        "name": "To worldmap",
+        "mode": "link",
+        "links": [
+            "80985fb2e07d288d"
+        ],
+        "x": 695,
+        "y": 1060,
+        "wires": []
+    },
+    {
+        "id": "80985fb2e07d288d",
+        "type": "link in",
+        "z": "9f9a0fd71b2c7320",
+        "name": "",
+        "links": [
+            "300044864703d84d"
+        ],
+        "x": 655,
+        "y": 740,
+        "wires": [
+            [
+                "e22625b0ec896dcd"
+            ]
+        ]
+    },
+    {
+        "id": "738861e39295594e",
+        "type": "inject",
+        "z": "9f9a0fd71b2c7320",
+        "name": "Detection - structure",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "Detection",
+        "payload": "{\"header\":{\"reTransmit\":\"int\",\"seq\":\"int\",\"Ack\":\"int\",\"nsecs\":\"int\",\"secs\":\"int\",\"msgType\":\"int\",\"id\":\"int\"},\"relative_bearing\":\"float\",\"right_detection\":\"bool\"}",
+        "payloadType": "json",
+        "x": 160,
+        "y": 140,
+        "wires": [
+            [
+                "e67d7a86f83e7819"
+            ]
+        ]
+    },
+    {
+        "id": "e67d7a86f83e7819",
+        "type": "change",
+        "z": "9f9a0fd71b2c7320",
+        "name": "Save to global.BoatDetectionStruct",
+        "rules": [
+            {
+                "t": "set",
+                "p": "DetectionStruct",
+                "pt": "global",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 480,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "af9dd9dee591240e",
+        "type": "ui_numeric",
+        "z": "9f9a0fd71b2c7320",
+        "d": true,
+        "name": "Sjekk relative bearing",
+        "label": "numeric",
+        "tooltip": "",
+        "group": "adfec63678897b76",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "wrap": false,
+        "passthru": true,
+        "topic": "payload.relative_bearing",
+        "topicType": "msg",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "50",
+        "step": "0.1",
+        "className": "",
+        "x": 1200,
+        "y": 2160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2e8c70ff75f2d95e",
+        "type": "ui_table",
+        "z": "9f9a0fd71b2c7320",
+        "d": true,
+        "group": "adfec63678897b76",
+        "name": "Detections",
+        "order": 2,
+        "width": "19",
+        "height": "4",
+        "columns": [],
+        "outputs": 0,
+        "cts": false,
+        "x": 1130,
+        "y": 2200,
+        "wires": [],
+        "info": "[\r\n    {\r\n        \"Name\": \"Kazuhito Yokoi\",\r\n        \"Age\": \"35\",\r\n        \"Favourite Color\": \"red\",\r\n        \"Date Of Birth\": \"12/09/1983\"\r\n    },\r\n    {\r\n        \"Name\": \"Oli Bob\",\r\n        \"Age\": \"12\",\r\n        \"Favourite Color\": \"cyan\",\r\n        \"Date Of Birth\": \"12/08/2017\"\r\n    }\r\n]"
+    },
+    {
+        "id": "1123a3f25717bc5d",
+        "type": "function",
+        "z": "9f9a0fd71b2c7320",
+        "d": true,
+        "name": "reformat (delete and replace)",
+        "func": "var Detection = msg.payload;\nmsg.topic = {};\n//Place at new position\nmsg.topic.id = Detection.header.id;\nmsg.topic.rel_bear = Detection.relative_bearing;\nmsg.topic.right = Detection.right_detection;\n\nglobal.set(\"list[\"+(Detection.header.id)+\"]\",msg.topic );\n\nmsg.payload = global.get(\"list\");\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 900,
+        "y": 2160,
+        "wires": [
+            [
+                "2e8c70ff75f2d95e",
+                "af9dd9dee591240e"
+            ]
+        ]
+    },
+    {
+        "id": "bfd2ee6a7c94b417",
+        "type": "function",
+        "z": "9f9a0fd71b2c7320",
+        "name": "Send detections to map",
+        "func": "var Detection_for_map = msg.payload;\nif (Detection_for_map.detection.right) {\n\n//    delete msg.payload;\n//    msg.payload = {};\n\n    //Delete old position\n    msg.payload.layer = \"Detection\";\n    msg.payload.name = \"Detection \" + Detection_for_map.position.id;\n    //msg.payload.name = \"Detection \";\n    //Place at new position\n    msg.payload.lat = Detection_for_map.position.lat;\n    msg.payload.lon = Detection_for_map.position.lon;\n    msg.payload.id = Detection_for_map.position.id;\n    //msg.payload.bearing = Detection.relative_bearing;\n    msg.payload.icon = \"arrow\";\n    msg.payload.iconColor = \"red\";\n    //msg.payload.iconSize = 2;\n    //msg.payload.iconOpacity = 0.01;\n    //msg.payload.ttl = 5;    //Båten forsvinner etter 5 sec uten ny oppdatering\n    msg.payload.bearing = Detection_for_map.position.bearing + Detection_for_map.detection.rel_bear;\n    msg.payload.speed = 6;\n    msg.payload.time = Date.now();\n\n    node.send(msg);\n//return msg;\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1850,
+        "y": 260,
+        "wires": [
+            [
+                "0fdcec267c0f6bce"
+            ]
+        ]
+    },
+    {
+        "id": "029ffadf1b843206",
+        "type": "join",
+        "z": "9f9a0fd71b2c7320",
+        "name": "Join detection and position data",
+        "mode": "custom",
+        "build": "object",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": true,
+        "timeout": "",
+        "count": "2",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "num",
+        "reduceFixup": "",
+        "x": 1590,
+        "y": 260,
+        "wires": [
+            [
+                "bfd2ee6a7c94b417"
+            ]
+        ]
+    },
+    {
+        "id": "f6013a631781deec",
+        "type": "function",
+        "z": "9f9a0fd71b2c7320",
+        "name": "reformat (delete and replace)",
+        "func": "var BoatOdometry = msg.payload;\nmsg.topic = \"position\";\ndelete msg.payload;\nmsg.payload = {};\n\n//Place at new position\nmsg.payload.lat = BoatOdometry.lat;\nmsg.payload.lon = BoatOdometry.lon;\nmsg.payload.bearing = BoatOdometry.bearing;\nmsg.payload.id = BoatOdometry.id;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1300,
+        "y": 240,
+        "wires": [
+            [
+                "029ffadf1b843206"
+            ]
+        ]
+    },
+    {
+        "id": "28baa57701fca845",
+        "type": "function",
+        "z": "9f9a0fd71b2c7320",
+        "name": "reformat (delete and replace)",
+        "func": "var Detection = msg.payload;\nmsg.topic = \"detection\";\ndelete msg.payload;\nmsg.payload = {};\n\n//Place at new position\n//msg.payload.id = Detection.header.id;\n\n//msg.topic.det_id = Detection.header.id;\n//delete msg.payload;\n//msg.payload = {};\n\n//Place at new position\nmsg.payload.det_id = Detection.header.id;\n\n//For testing\nmsg.payload.rel_bear = Detection.Detection.relative_bearing;\nmsg.payload.right = Detection.Detection.right_detection;\n\n//Original\n//msg.payload.rel_bear = Detection.Detection.relative_bearing;\n//msg.payload.right = Detection.Detection.right_detection;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1040,
+        "y": 360,
+        "wires": [
+            [
+                "029ffadf1b843206"
+            ]
+        ]
+    },
+    {
+        "id": "99cc394dba160f54",
+        "type": "inject",
+        "z": "9f9a0fd71b2c7320",
+        "name": "UDP-sample-boat3",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "str",
+        "x": 1210,
+        "y": 560,
+        "wires": [
+            [
+                "4ee7ede853e59c5a"
+            ]
+        ]
+    },
+    {
+        "id": "4ee7ede853e59c5a",
+        "type": "function",
+        "z": "9f9a0fd71b2c7320",
+        "name": "load sample",
+        "func": "msg.payload = '{\"header\": {\"reTransmit\": 0, \"seq\": 0, \"Ack\": 0, \"nsecs\": 687854051, \"secs\": 1669381516, \"msgType\": 1, \"id\": 3}, \"movement\": {\"speed\": 2.35, \"heading\": 332.0}, \"position\": {\"latitude\": 60.396889, \"longitude\": 5.2663051}}';\nmsg.payload = '0' + msg.payload;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1470,
+        "y": 560,
+        "wires": [
+            [
+                "55f7d8a84d56d6a9"
+            ]
+        ]
+    },
+    {
+        "id": "60372ebe8e3ffad3",
+        "type": "inject",
+        "z": "9f9a0fd71b2c7320",
+        "name": "UDP-sample-detection3",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "str",
+        "x": 1220,
+        "y": 620,
+        "wires": [
+            [
+                "80a9844f3d61bef8"
+            ]
+        ]
+    },
+    {
+        "id": "80a9844f3d61bef8",
+        "type": "function",
+        "z": "9f9a0fd71b2c7320",
+        "name": "load sample",
+        "func": "msg.payload = '{\"header\": {\"reTransmit\": 0, \"seq\": 0, \"Ack\": 0, \"nsecs\": 687854051, \"secs\": 1669381516, \"msgType\": 4, \"id\": 3}, \"Detection\": {\"relative_bearing\": 2.393889, \"right_detection\": true}}';\nmsg.payload = '0' + msg.payload;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1430,
+        "y": 620,
+        "wires": [
+            [
+                "55f7d8a84d56d6a9"
+            ]
+        ]
+    },
+    {
+        "id": "cabe6cd115ad484a",
+        "type": "inject",
+        "z": "9f9a0fd71b2c7320",
+        "name": "UDP-sample-boat1",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "str",
+        "x": 1210,
+        "y": 720,
+        "wires": [
+            [
+                "28e1414cb4234770"
+            ]
+        ]
+    },
+    {
+        "id": "28e1414cb4234770",
+        "type": "function",
+        "z": "9f9a0fd71b2c7320",
+        "name": "load sample",
+        "func": "msg.payload = '{\"header\": {\"reTransmit\": 0, \"seq\": 0, \"Ack\": 0, \"nsecs\": 687854051, \"secs\": 1669381516, \"msgType\": 1, \"id\": 1}, \"movement\": {\"speed\": 1.35, \"heading\": 332.0}, \"position\": {\"latitude\": 60.396189, \"longitude\": 5.2643051}}';\nmsg.payload = '0' + msg.payload;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1430,
+        "y": 720,
+        "wires": [
+            [
+                "55f7d8a84d56d6a9"
+            ]
+        ]
+    },
+    {
+        "id": "540b0c3663957aa5",
+        "type": "inject",
+        "z": "9f9a0fd71b2c7320",
+        "name": "UDP-sample-detection3",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "str",
+        "x": 1200,
+        "y": 760,
+        "wires": [
+            [
+                "223af23f39c1702b"
+            ]
+        ]
+    },
+    {
+        "id": "223af23f39c1702b",
+        "type": "function",
+        "z": "9f9a0fd71b2c7320",
+        "name": "load sample",
+        "func": "msg.payload = '{\"header\": {\"reTransmit\": 0, \"seq\": 0, \"Ack\": 0, \"nsecs\": 687854051, \"secs\": 1669381516, \"msgType\": 4, \"id\": 1}, \"Detection\": {\"relative_bearing\": 24.393889, \"right_detection\": true}}';\nmsg.payload = '0' + msg.payload;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1430,
+        "y": 760,
+        "wires": [
+            [
+                "55f7d8a84d56d6a9"
+            ]
+        ]
+    },
+    {
+        "id": "79855267f4411ee1",
+        "type": "inject",
+        "z": "9f9a0fd71b2c7320",
+        "name": "UDP-sample-boat2",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "str",
+        "x": 1210,
+        "y": 800,
+        "wires": [
+            [
+                "c71d208501a6b1fe"
+            ]
+        ]
+    },
+    {
+        "id": "c71d208501a6b1fe",
+        "type": "function",
+        "z": "9f9a0fd71b2c7320",
+        "name": "load sample",
+        "func": "msg.payload = '{\"header\": {\"reTransmit\": 0, \"seq\": 0, \"Ack\": 0, \"nsecs\": 687854051, \"secs\": 1669381516, \"msgType\": 1, \"id\": 2}, \"movement\": {\"speed\": 1.15, \"heading\": 302.0}, \"position\": {\"latitude\": 60.395789, \"longitude\": 5.2653051}}';\nmsg.payload = '0' + msg.payload;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1430,
+        "y": 800,
+        "wires": [
+            [
+                "55f7d8a84d56d6a9"
+            ]
+        ]
+    },
+    {
+        "id": "159f0dd7a0d77c69",
+        "type": "debug",
+        "z": "9f9a0fd71b2c7320",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 540,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "15bdb223c224c846",
+        "type": "function",
+        "z": "9f9a0fd71b2c7320",
+        "d": true,
+        "name": "Send detections to map",
+        "func": "var Detection_for_map = msg.payload;\nif (Detection_for_map.detection.right) {\n\n//    delete msg.payload;\n//    msg.payload = {};\n\n    //Delete old position\n    msg.payload.layer = \"Detection\";\n    msg.payload.name = \"Detection \" + Detection_for_map.position.id;\n    //msg.payload.name = \"Detection \";\n    //Place at new position\n    msg.payload.lat = Detection_for_map.position.lat;\n    msg.payload.lon = Detection_for_map.position.lon;\n    msg.payload.id = Detection_for_map.position.id;\n    //msg.payload.bearing = Detection.relative_bearing;\n    msg.payload.icon = \"arrow\";\n    msg.payload.iconColor = \"red\";\n    //msg.payload.iconSize = 2;\n    //msg.payload.iconOpacity = 0.01;\n    //msg.payload.ttl = 5;    //Båten forsvinner etter 5 sec uten ny oppdatering\n    msg.payload.bearing = Detection_for_map.position.bearing + Detection_for_map.detection.rel_bear;\n    msg.payload.speed = 6;\n    msg.payload.time = Date.now();\n\n    node.send(msg);\n//return msg;\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1030,
+        "y": 1220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "adfec63678897b76",
+        "type": "ui_group",
+        "name": "test",
+        "tab": "6efe825093807dba",
+        "order": 2,
+        "disp": false,
+        "width": "20",
+        "collapse": false
+    },
+    {
+        "id": "ac3aa95791cf5f2c",
+        "type": "ui_group",
+        "name": "Control",
+        "tab": "6efe825093807dba",
+        "order": 1,
+        "disp": false,
+        "width": "9",
+        "collapse": false
+    },
+    {
+        "id": "6efe825093807dba",
+        "type": "ui_tab",
+        "name": "Swarm ground station - mod",
+        "icon": "dashboard",
+        "order": 8,
+        "disabled": false,
+        "hidden": false
+    }
+]
